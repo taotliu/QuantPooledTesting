@@ -1,0 +1,195 @@
+#' Empirical CDF Calculation for Quantitative Pooled Testing
+#'
+#' Compute an empirical cumulative distribution function, with
+#' results similar to an “ecdf” object.
+#'
+#' @param v Numeric vector of the observations for calculating ecdf. For quantitative pooling
+#' strategies, only CDF on the support of v < cutoff is needed; so \code{v} can be the fraction
+#' of observations less than the cutoff and use \code{N} to pass the number of all observations.
+#' @param N The number (vector length) of the observations. By default, \code{N = length(v)}.
+#' @param cutoff Cutoff value of quantitative assay that defines test positivity. By default,
+#' \code{cutoff = max(v)} which calculates the CDF for the entire support of \code{v}.
+#' @param ... Arguments to be passed to subsequent methods.
+#'
+#' @return The function returns a matrix of three columns: The support of (\code{v <= cutoff}),
+#' empirical PMF and empirical CDF.
+#'
+#' @keywords Quantitative Pooled Testing
+#'
+#' @references
+#'
+#' Liu T, Hogan JW, Daniels, MJ, Coetzer M, Xu Y, Bove G, et al. Improved HIV-1 Viral Load
+#' Monitoring Capacity Using Pooled Testing with Marker-Assisted Deconvolution. Journal of
+#' AIDS. 2017;75(5): 580-587.
+#'
+#' @examples
+#'
+#' ecdf_pool(round(runif(100, 0, 20)), cutoff = 18)
+#'
+ecdf_pool = function (v, N = length(v), cutoff = max(v), ...){
+  v0 = sort(unique(v))
+  ecdf.vl0 = cbind(x = v0, pmf = as.vector(tabulate(match(v, v0)))/N)
+  ecdf.vl = ecdf.vl0[v0 <= cutoff, ]
+  if(length(ecdf.vl)==0)
+    ecdf.vl = c(NA, 0)
+  dim(ecdf.vl) = c(length(ecdf.vl)/2, 2)
+  ecdf.vl = cbind(ecdf.vl, cdf = cumsum(ecdf.vl[, 2]))
+  list(out = ecdf.vl, p0 = tail(ecdf.vl[, 3], 1))
+}
+
+
+#' Convert ecdf_pool output to an \code{ecdf} class
+#'
+#' @param x Output from the \code{ecdf_pool()} function
+#'
+#' @return Output in the \code{ecdf} class
+#'
+to_ecdf_class = function(x){
+  rval <- approxfun(x$out[, 1], x$out[, 3],
+                    method = "constant", yleft = 0, yright = x$p0, f = 0, ties = "ordered")
+  class(rval) <- c("ecdf", "stepfun", class(rval))
+  attr(rval, "call") <- sys.call()
+  rval
+}
+
+
+#' Convolution of two empirical distributions
+#'
+#' The function calculates the convolution of two empirical distributions up to the value of
+#' \code{cutoff} (on the sum of two random variables).
+#'
+#' @param ecdf1 An ecdf from the function \code{convol.dens()} itself or from the function
+#' \code{ecdf_pool()}. The ecdf can be truncated up by \code{cutoff}.
+#' @param ecdf2 An ecdf from the function \code{convol.dens()} itself or from the function
+#' \code{ecdf_pool()}. The ecdf can be truncated up by \code{cutoff}.
+#' @param N1 The size of the emprical support of \code{ecdf1}.
+#' @param N2 The size of the emprical support of \code{ecdf2}.
+#' @param cutoff Cutoff of the support of the resulting convolution distribution
+#'
+#' @return The function returns a matrix of three columns: The support of convolution distribution
+#' up to \code{cutoff}, empirical PMF and empirical CDF.
+#'
+#' @references
+#'
+#' Liu T, Hogan JW, Daniels, MJ, Coetzer M, Xu Y, Bove G, et al. Improved HIV-1 Viral Load
+#' Monitoring Capacity Using Pooled Testing with Marker-Assisted Deconvolution. Journal of
+#' AIDS. 2017;75(5): 580-587.
+#'
+convol.dens <- function(ecdf1, ecdf2, N1, N2, cutoff) {
+  #print((ecdf1))
+  if(is.na(ecdf1[1, 1])){
+    out = c(NA, 0)
+  }
+  else{
+    NN1 = nrow(ecdf1)
+    NN2 = nrow(ecdf2)
+    foo1 = kronecker(t(rep(1, NN2)), ecdf1[, 1])
+    foo2 = kronecker(rep(1, NN1), t(ecdf2[, 1]))
+    foo.sum = foo1 + foo2
+    foo1 = kronecker(t(rep(1, NN2)), ecdf1[, 2])
+    foo2 = kronecker(rep(1, NN1), t(ecdf2[, 2]))
+    foo.freq = foo1 * foo2
+    if(all(foo.sum > cutoff)){
+      out = c(NA, 0)
+    }else{
+      out = aggregate( foo.freq[foo.sum <= cutoff], list(foo.sum[foo.sum <= cutoff]), sum)
+    }
+  }
+
+  dim(out) = c(length(out)/2, 2)
+  colnames(out) = c("v", "freq")
+  out = cbind(out, cdf = cumsum(out[, 2]))
+  list(out = out, p0 = tail(out[, 3], 1))
+}
+
+
+#' Average Tests Required (ART) needed by MiniPooling with Algorithm (MPA)
+#'
+#' This function calculates the ART needed by MPA for a range of pool sizes
+#' (from 2 to a pool size specified).
+#'
+#' @inheritParams ecdf_pool
+#' @param max_K Maximum pool size that is considered.
+#' @param quietly Logical value; whether print the results to screen or not.
+#'
+mpa_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
+{
+  t1 = ecdf_pool(v, N, cutoff)
+  pp = t1$p0
+  tt = t1$out
+
+  atr = NA
+  for (i in 2:max_K) {
+    tt = convol.dens(tt, t1$out, N^(i - 1), N, cutoff)
+    pp = c(pp, tt$p0)
+    atr0 = 1 + sum(1 - pp[-1])
+    if (!quietly)
+      cat("With a pool size of k =", i, ", the estimated ATR using MPA is:",
+          round(atr0/i * 100, 2), "assays per 100 individuals.\n")
+    atr = c(atr, atr0/i*100)
+    tt = tt$out
+  }
+  out = cbind(Pool_Size = 1:max_K, convol_cdf = pp, MPA_ATR = atr)
+}
+
+
+#' Average Tests Required (ART) needed by MiniPooling (MP)
+#'
+#' This function calculates the ART needed by MP for a range of pool sizes
+#' (from 2 to a pool size specified).
+#'
+#' @inheritParams mpa_atr
+#'
+#'
+mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000){
+  foo = mpa_atr(v, N, max_K, cutoff, quietly = T)
+  out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
+  out[1, 4] = NA
+  out
+}
+
+
+
+#' Average Tests Required (ART) needed by Mark-Assisted MiniPooling with Algorithm (mMPA)
+#'
+#' This function calculates the ART needed by MP for a range of pool sizes
+#' (from 2 to a pool size specified).
+#'
+#' @inheritParams mpa_atr
+#' @param s Risk score that is used for ranked testing
+#'
+mmpa_atr = function(v, s, N = length(v), max_K = 5, cutoff = 1000, quietly = T){
+  nonFailure = (v <= cutoff)
+  numNonFailure = sum(nonFailure)
+
+  s = rank(s, ties.method = "random")
+  s0 = s[nonFailure]
+  v0 = v[nonFailure]
+
+  foo = order(s0)
+  s0 = s0[foo]
+  v0 = v0[foo]
+
+  PrTGivenS = matrix(NA, max_K-1, length(s0))
+  PrTGivenS[, 1] = (c(2:max_K) * v[1]) <= cutoff
+
+  pb <- txtProgressBar(min = 0, max = numNonFailure, style = 3)
+  for(i in 2:numNonFailure){
+    PrTGivenS[, i] = mpa_atr( v0[1:i], N = s0[i], max_K = (max_K-1),
+                              cutoff = max(cutoff - v0[i], 50), quietly = quietly )[, 2]
+    setTxtProgressBar(pb, i)
+  }
+
+  out = NULL
+  for(k in 2:max_K){
+    cdfs = NULL
+    for(j in 2:k){
+      cdfs = c(cdfs, PrTGivenS[j-1, ] %*% dbeta(s0/N, j, k+1-j))
+    }
+    out = c(out, k - sum(cdfs/N))
+  }
+
+  cbind(Pool_Size = 2:max_K, mMPA_ATR = 100*out/c(2:max_K))
+}
+
+

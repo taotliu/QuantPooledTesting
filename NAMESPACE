@@ -1,0 +1,6 @@
+importFrom("utils", "tail")
+importFrom("stats", "approxfun")
+importFrom("stats", "aggregate")
+importFrom("stats", "dbeta")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
+exportPattern("^[[:alpha:]]+")
