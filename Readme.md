@@ -1,4 +1,4 @@
-# QuantPooledTesting
+# R: QuantPooledTesting
 An R package for implementing pooled testing with quantitative assays. 
 
 REF: Liu T, Hogan JW, Daniels MJ, et al. (2017). "Improved HIV-1 viral load monitoring capacity using pooled testing with marker-assisted deconvolution." *J Acquir Immune Defic Syndr* 75(5):580-587. doi: 10.1097/QAI.0000000000001424.
