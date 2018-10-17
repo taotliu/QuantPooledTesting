@@ -9,5 +9,5 @@ The latest version of the `mMPA` package is available at GitHub [taotliu/mMPA](h
 
 ```R
 devtools::install_github("taotliu/QuantPooledTesting")
-library(mMPA)
+library(QuantPooledTesting)
 ```
