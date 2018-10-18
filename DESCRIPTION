@@ -3,10 +3,10 @@ Type: Package
 Title: Pooled Testing Strategies with Quantitative Assays 
 Version: 0.1.0
 Author: "Tao Liu, PhD <tliu@stat.brown.edu> [aut, cre]"
-Maintainer: "Tao Liu, PhD" <yourself@somewhere.net>
-Description: The package includes functions that calculate the estimated number of quantitative 
-    assays that are needed by mini-pooling (MP), MP with algorithm (MPA), and marker-assisted MPA 
-    (mMPA). 
+Maintainer: "Tao Liu, PhD" <tliu@stat.brown.edu>
+Description: To calculate the estimated number of quantitative 
+    assays that are needed by "mini-pooling", "mini-pooling with algorithm" (May et al 2010), 
+    and marker-assisted mini-pooling with algorithm (Liu et al 2017). 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
