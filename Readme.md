@@ -5,7 +5,7 @@ REF: Liu T, Hogan JW, Daniels MJ, et al. (2017). "Improved HIV-1 viral load moni
 
 ## Installation 
 
-The latest version of the `mMPA` package is available at GitHub [taotliu/mMPA](http://github.com/taotliu/mMPA). It requires the `devtools` package to be installed in R. If you do not have `devtools` in your R program, use the code  `install.packages("devtools")` to install the `devtools` package first. Then run the following codes to install the `mMPA` package. 
+The latest version of the `QuantPooledTesting` package is available at GitHub [taotliu/QuantPooledTesting](http://github.com/taotliu/QuantPooledTesting). It requires the `devtools` package to be installed in R. If you do not have `devtools` in your R program, use the code  `install.packages("devtools")` to install the `devtools` package first. Then run the following codes to install the `QuantPooledTesting` package. 
 
 ```R
 devtools::install_github("taotliu/QuantPooledTesting")
