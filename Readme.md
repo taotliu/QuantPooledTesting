@@ -1,4 +1,4 @@
-# R: QuantPooledTesting
+# R package: QuantPooledTesting
 An R package for implementing pooled testing with quantitative assays. 
 
 ## Author
