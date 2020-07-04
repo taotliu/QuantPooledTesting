@@ -1,6 +1,11 @@
 # R: QuantPooledTesting
 An R package for implementing pooled testing with quantitative assays. 
 
+## Author
+
+Tao Liu, PhD
+Brown University 
+
 ## Installation 
 
 The latest version of the `QuantPooledTesting` package is available at GitHub [taotliu/QuantPooledTesting](http://github.com/taotliu/QuantPooledTesting). It requires the `devtools` package to be installed in R. If you do not have `devtools` in your R program, use the code  `install.packages("devtools")` to install the `devtools` package first. Then run the following codes to install the `QuantPooledTesting` package. 
