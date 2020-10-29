@@ -1,7 +1,7 @@
 Package: QuantPooledTesting
 Type: Package
 Title: Pooled Testing Strategies with Quantitative Assays 
-Version: 0.2.2
+Version: 0.2.3
 Author: "Tao Liu, PhD <tliu@stat.brown.edu> [aut, cre]"
 Maintainer: "Tao Liu, PhD" <tliu@stat.brown.edu>
 Description: To calculate the estimated number of quantitative 
