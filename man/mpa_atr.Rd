@@ -21,6 +21,6 @@ of observations less than the cutoff and use \code{N} to pass the number of all 
 \item{quietly}{Logical value; whether print the results to screen or not.}
 }
 \description{
-This function calculates the ART needed by MPA for a range of pool sizes
+This function calculates the ART needed by MP for a range of pool sizes
 (from 2 to a pool size specified).
 }
