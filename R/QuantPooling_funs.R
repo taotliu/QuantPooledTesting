@@ -142,7 +142,7 @@ foo_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = T)
 #'
 #'
 mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = T){
-  foo = foo_atr(v, N, max_K, cutoff, quietly)
+  foo = foo_atr(v, N, max_K, cutoff, quietly=T)
   out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
   out[1, 4] = NA
   out[, 4] = out[, 4]/100
