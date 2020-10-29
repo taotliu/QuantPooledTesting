@@ -103,7 +103,7 @@ convol.dens <- function(ecdf1, ecdf2, N1, N2, cutoff) {
 }
 
 
-#' Average Tests Required (ART) needed by MiniPooling with Algorithm (MPA)
+#' Intermediat func needed by MiniPooling with Algorithm (MPA)
 #'
 #' This function calculates the ART needed by MPA for a range of pool sizes
 #' (from 2 to a pool size specified).
@@ -138,10 +138,10 @@ foo_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
 #' This function calculates the ART needed by MP for a range of pool sizes
 #' (from 2 to a pool size specified).
 #'
-#' @inheritParams mpa_atr
+#' @inheritParams foo_atr
 #'
 #'
-mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000){
+mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F){
   foo = foo_atr(v, N, max_K, cutoff, quietly = T)
   out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
   out[1, 4] = NA
@@ -149,8 +149,17 @@ mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000){
   out[-1, c(1, 4)]
 }
 
-mpa_atr = function(v, N = length(v), max_K = 5, cutoff = 1000){
-  foo = foo_atr(v, N, max_K, cutoff, quietly = T)
+
+#' Average Tests Required (ART) needed by MiniPooling with Algorithm (MPA)
+#'
+#' This function calculates the ART needed by MP for a range of pool sizes
+#' (from 2 to a pool size specified).
+#'
+#' @inheritParams foo_atr
+#'
+#'
+mpa_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F){
+  foo = foo_atr(v, N, max_K, cutoff, quietly)
   out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
   out[1, 4] = NA
   out[, 3] = out[, 3]/100
