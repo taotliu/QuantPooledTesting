@@ -112,7 +112,7 @@ convol.dens <- function(ecdf1, ecdf2, N1, N2, cutoff) {
 #' @param max_K Maximum pool size that is considered.
 #' @param quietly Logical value; whether print the results to screen or not.
 #'
-mpa_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
+foo_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
 {
   t1 = ecdf_pool(v, N, cutoff)
   pp = t1$p0
@@ -142,12 +142,20 @@ mpa_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
 #'
 #'
 mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000){
-  foo = mpa_atr(v, N, max_K, cutoff, quietly = T)
+  foo = foo_atr(v, N, max_K, cutoff, quietly = T)
   out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
   out[1, 4] = NA
-  out
+  out[, 4] = out[, 4]/100
+  out[-1, c(1, 4)]
 }
 
+mpa_atr = function(v, N = length(v), max_K = 5, cutoff = 1000){
+  foo = foo_atr(v, N, max_K, cutoff, quietly = T)
+  out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
+  out[1, 4] = NA
+  out[, 3] = out[, 3]/100
+  out[-1, c(1, 3)]
+}
 
 
 #' Average Tests Required (ART) needed by Mark-Assisted MiniPooling with Algorithm (mMPA)
@@ -175,7 +183,7 @@ mmpa_atr = function(v, s, N = length(v), max_K = 5, cutoff = 1000, quietly = T){
 
   pb <- txtProgressBar(min = 0, max = numNonFailure, style = 3)
   for(i in 2:numNonFailure){
-    PrTGivenS[, i] = mpa_atr( v0[1:i], N = s0[i], max_K = (max_K-1),
+    PrTGivenS[, i] = foo_atr( v0[1:i], N = s0[i], max_K = (max_K-1),
                               cutoff = max(cutoff - v0[i], 50), quietly = quietly )[, 2]
     setTxtProgressBar(pb, i)
   }
@@ -189,7 +197,7 @@ mmpa_atr = function(v, s, N = length(v), max_K = 5, cutoff = 1000, quietly = T){
     out = c(out, k - sum(cdfs/N))
   }
 
-  cbind(Pool_Size = 2:max_K, mMPA_ATR = 100*out/c(2:max_K))
+  cbind(Pool_Size = 2:max_K, mMPA_ATR = out/c(2:max_K))
 }
 
 
