@@ -4,7 +4,7 @@
 \alias{foo_atr}
 \title{Intermediat func needed by MiniPooling with Algorithm (MPA)}
 \usage{
-foo_atr(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
+foo_atr(v, N = length(v), max_K = 5, cutoff = 1000, quietly = T)
 }
 \arguments{
 \item{v}{Numeric vector of the observations for calculating ecdf. For quantitative pooling

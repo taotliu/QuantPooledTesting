@@ -4,7 +4,7 @@
 \alias{mpa_atr}
 \title{Average Tests Required (ART) needed by MiniPooling with Algorithm (MPA)}
 \usage{
-mpa_atr(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
+mpa_atr(v, N = length(v), max_K = 5, cutoff = 1000, quietly = T)
 }
 \arguments{
 \item{v}{Numeric vector of the observations for calculating ecdf. For quantitative pooling

@@ -112,7 +112,7 @@ convol.dens <- function(ecdf1, ecdf2, N1, N2, cutoff) {
 #' @param max_K Maximum pool size that is considered.
 #' @param quietly Logical value; whether print the results to screen or not.
 #'
-foo_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
+foo_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = T)
 {
   t1 = ecdf_pool(v, N, cutoff)
   pp = t1$p0
@@ -141,7 +141,7 @@ foo_atr = function (v, N = length(v), max_K = 5, cutoff = 1000, quietly = F)
 #' @inheritParams foo_atr
 #'
 #'
-mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F){
+mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = T){
   foo = foo_atr(v, N, max_K, cutoff, quietly)
   out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
   out[1, 4] = NA
@@ -158,7 +158,7 @@ mp_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F){
 #' @inheritParams foo_atr
 #'
 #'
-mpa_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = F){
+mpa_atr = function(v, N = length(v), max_K = 5, cutoff = 1000, quietly = T){
   foo = foo_atr(v, N, max_K, cutoff, quietly)
   out = cbind(foo, MP_ATR = (1+(1-foo[, 2])*foo[, 1]) / foo[, 1]*100)
   out[1, 4] = NA
